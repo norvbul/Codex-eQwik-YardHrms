@@ -1,0 +1,18 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "outDir": "dist",
+    "rootDir": ".",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext"
+  },
+  "include": [
+    "apps/api/**/*.ts",
+    "apps/worker/**/*.ts",
+    "packages/payroll-engine/**/*.ts",
+    "packages/authorization/**/*.ts",
+    "packages/types/**/*.ts"
+  ],
+  "exclude": ["node_modules", "apps/*/dist", "**/*.test.ts"]
+}

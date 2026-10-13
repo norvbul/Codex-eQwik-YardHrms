@@ -1,0 +1,26 @@
+{
+  "name": "@yard/hrms-web",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0 --strictPort",
+    "build": "vite build"
+  },
+  "dependencies": {
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "react-router-dom": "^7.9.0",
+    "@tanstack/react-query": "^5.90.0",
+    "react-hook-form": "^7.65.0",
+    "@hookform/resolvers": "^5.2.0",
+    "recharts": "^3.3.0",
+    "lucide-react": "^0.548.0"
+  },
+  "devDependencies": {
+    "vite": "^8.3.0",
+    "@vitejs/plugin-react": "^6.1.1",
+    "tailwindcss": "^4.1.0",
+    "@tailwindcss/vite": "^4.1.0"
+  }
+}

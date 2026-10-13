@@ -1,0 +1,10 @@
+{
+  "name": "@yard/payroll-engine",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "dependencies": {
+    "decimal.js": "^10.6.0",
+    "zod": "^4.1.0"
+  }
+}

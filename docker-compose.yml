@@ -1,0 +1,52 @@
+name: yardhrms
+services:
+  mysql:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: yardhrms
+      MYSQL_USER: yard
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?Run npm run env:init}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Run npm run env:init}
+    command: ['--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci']
+    ports: ['127.0.0.1:3306:3306']
+    volumes: ['mysql-data:/var/lib/mysql']
+    healthcheck:
+      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']
+      interval: 5s
+      timeout: 5s
+      retries: 30
+  redis:
+    image: redis:7.4-alpine
+    command: ['redis-server', '--appendonly', 'yes']
+    ports: ['127.0.0.1:6379:6379']
+    volumes: ['redis-data:/data']
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      retries: 10
+  mailpit:
+    image: axllent/mailpit:v1.27
+    ports: ['127.0.0.1:1025:1025', '127.0.0.1:8025:8025']
+  storage:
+    image: localstack/localstack:4.0.3
+    environment:
+      SERVICES: s3
+      AWS_DEFAULT_REGION: us-east-1
+    ports: ['127.0.0.1:9000:4566']
+    volumes: ['object-data:/var/lib/localstack']
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'python',
+          '-c',
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:4566/_localstack/health', timeout=3)",
+        ]
+      interval: 5s
+      retries: 15
+
+volumes:
+  mysql-data:
+  redis-data:
+  object-data:

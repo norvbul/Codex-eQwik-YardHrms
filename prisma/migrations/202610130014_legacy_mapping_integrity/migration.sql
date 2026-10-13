@@ -1,0 +1,7 @@
+-- AlterTable
+ALTER TABLE `LegacyMap` ADD COLUMN `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    ADD COLUMN `sourceDigest` CHAR(64) NOT NULL DEFAULT '';
+
+-- AddForeignKey
+ALTER TABLE `LegacyMap` ADD CONSTRAINT `LegacyMap_tenantId_fkey` FOREIGN KEY (`tenantId`) REFERENCES `Tenant`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+

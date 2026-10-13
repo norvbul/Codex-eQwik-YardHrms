@@ -1,0 +1,13 @@
+{
+  "EmployeeID": "legacyId",
+  "EmployeeNumber": "employeeNumber",
+  "FirstName": "firstName",
+  "LastName": "lastName",
+  "Email": "email",
+  "HireDate": "hireDate",
+  "Frequency": "frequency",
+  "PayType": "payType",
+  "BasePay": "basePay",
+  "StandardHours": "standardHours",
+  "Active": "active"
+}

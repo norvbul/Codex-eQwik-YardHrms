@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE `Role` ADD COLUMN `approvalScope` VARCHAR(16) NOT NULL DEFAULT 'TENANT';
+

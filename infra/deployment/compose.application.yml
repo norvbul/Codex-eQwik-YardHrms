@@ -1,0 +1,44 @@
+# Run behind a managed HTTPS load balancer. Databases, Redis and S3 are external private services.
+services:
+  api:
+    image: ${YARD_IMAGE_REGISTRY:?Set an image registry}/yard-api:${YARD_RELEASE:?Pin a tested release}
+    env_file: ${YARD_RUNTIME_ENV_FILE:?Use an ignored secret file supplied by your secret manager}
+    restart: unless-stopped
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    expose: [3000]
+    healthcheck:
+      test:
+        [
+          CMD,
+          node,
+          -e,
+          "fetch('http://127.0.0.1:3000/api/v1/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))",
+        ]
+      interval: 30s
+      retries: 3
+  worker:
+    image: ${YARD_IMAGE_REGISTRY}/yard-api:${YARD_RELEASE}
+    command: [node, dist/apps/worker/src/index.js]
+    env_file: ${YARD_RUNTIME_ENV_FILE}
+    restart: unless-stopped
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+  hrms-web:
+    image: ${YARD_IMAGE_REGISTRY}/yard-hrms-web:${YARD_RELEASE}
+    restart: unless-stopped
+    ports: ['127.0.0.1:8080:8080']
+    depends_on: [api]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+  license-admin-web:
+    image: ${YARD_IMAGE_REGISTRY}/yard-license-admin-web:${YARD_RELEASE}
+    restart: unless-stopped
+    ports: ['127.0.0.1:8081:8080']
+    depends_on: [api]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]

@@ -1,0 +1,12 @@
+node_modules
+dist
+apps/*/dist
+.private
+attachments
+package-lock.json
+prisma/migrations
+prisma/schema.prisma
+docs/product-requirements.md
+docs/development-brief.md
+infra/docker/Dockerfile
+scripts/*.sh

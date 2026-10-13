@@ -1,0 +1,26 @@
+name: Application checks
+on: [push, pull_request]
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run env:init
+      - run: npm run infra:up
+      - run: npm run db:provision-local
+      - run: npm run db:generate && npm run db:migrate && npm run db:seed
+      - run: npm run format:check && npm run lint && npm run build && npm test
+      - run: npm run test:integration
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+      - run: npm run test:recovery
+      - run: npm audit --omit=dev
+      - name: Stop development infrastructure
+        if: always()
+        run: docker compose down

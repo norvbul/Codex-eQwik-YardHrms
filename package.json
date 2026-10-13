@@ -1,23 +1,89 @@
 {
-  "name": "codex-eqwik-yardhrms",
+  "name": "eqwik-yardhrms",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "type": "module",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "engines": {
+    "node": ">=24.0.0"
+  },
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "lint": "oxlint",
-    "preview": "vite preview"
+    "dev": "concurrently -k -n api,hrms,qwik,worker \"npm run dev -w @yard/api\" \"npm run dev -w @yard/hrms-web\" \"npm run dev -w @yard/license-admin-web\" \"npm run dev -w @yard/worker\"",
+    "env:init": "node scripts/init-env.mjs",
+    "infra:up": "docker compose up -d --wait",
+    "infra:down": "docker compose down",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate deploy",
+    "db:seed": "tsx prisma/seed/index.ts",
+    "typecheck": "tsc --noEmit",
+    "lint": "oxlint --deny-warnings apps packages scripts tests",
+    "build": "npm run typecheck && npm run build -w @yard/hrms-web && npm run build -w @yard/license-admin-web && tsc -p tsconfig.server.json",
+    "test": "tsx --test tests/unit/*.test.ts",
+    "test:integration": "tsx scripts/run-tests.ts integration",
+    "test:e2e": "tsx scripts/run-tests.ts e2e",
+    "check": "npm run lint && npm run build && npm test",
+    "platform:invite": "tsx scripts/invite-platform.ts",
+    "db:baseline": "tsx scripts/baseline-dev-db.ts",
+    "db:provision-local": "tsx scripts/provision-migrator.ts",
+    "format": "prettier --write apps packages scripts tests prisma/seed prisma.config.ts tsconfig*.json package.json docker-compose.yml .github infra docs README.md",
+    "format:check": "prettier --check apps packages scripts tests prisma/seed prisma.config.ts tsconfig*.json package.json docker-compose.yml .github infra docs README.md",
+    "backup:local": "tsx scripts/recovery.ts backup",
+    "restore:drill": "tsx scripts/recovery.ts restore-drill",
+    "legacy:etl": "tsx scripts/legacy-etl.ts",
+    "test:recovery": "tsx scripts/run-tests.ts recovery",
+    "api:docs": "node --import tsx scripts/generate-openapi.ts"
   },
   "dependencies": {
-    "react": "^19.2.8",
-    "react-dom": "^19.2.8"
+    "@aws-sdk/client-s3": "^3.900.0",
+    "@js-temporal/polyfill": "^0.5.1",
+    "@prisma/adapter-mariadb": "6.19.0",
+    "@prisma/client": "6.19.0",
+    "argon2": "^0.44.0",
+    "bullmq": "^5.61.0",
+    "cookie-parser": "^1.4.7",
+    "decimal.js": "^10.6.0",
+    "dotenv": "^17.2.0",
+    "exceljs": "^4.4.0",
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.1.0",
+    "helmet": "^8.1.0",
+    "ioredis": "^5.8.0",
+    "nodemailer": "10.1.0",
+    "otpauth": "^9.4.0",
+    "pdfkit": "^0.17.0",
+    "yauzl": "^3.4.0",
+    "zod": "^4.1.0"
   },
   "devDependencies": {
-    "@types/react": "^19.2.18",
-    "@types/react-dom": "^19.2.7",
-    "@vitejs/plugin-react": "^6.1.1",
+    "@playwright/test": "^1.56.0",
+    "@types/cookie-parser": "^1.4.9",
+    "@types/express": "^5.0.0",
+    "@types/node": "^24.0.0",
+    "@types/nodemailer": "^7.0.0",
+    "@types/pdfkit": "^0.17.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@types/supertest": "^6.0.0",
+    "@types/yauzl": "^3.4.0",
+    "concurrently": "^9.2.0",
     "oxlint": "^1.81.0",
-    "vite": "^8.3.0"
+    "prettier": "^3.6.2",
+    "prisma": "6.19.0",
+    "supertest": "^7.1.0",
+    "tsx": "^4.20.0",
+    "typescript": "^5.9.0"
+  },
+  "overrides": {
+    "mariadb": "3.5.4",
+    "@prisma/config": {
+      "deepmerge-ts": "8.0.2",
+      "effect": "3.20.0"
+    },
+    "exceljs": {
+      "uuid": "11.1.1"
+    }
   }
 }
